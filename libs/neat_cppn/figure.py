@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 def make_species(expt_path):
 
-    history_file = os.path.join(expt_path, 'history_pop.csv')
+    history_file = os.path.join(expt_path, 'history_pop.csv') # pathの作成
 
     data = pd.read_csv(history_file)
 

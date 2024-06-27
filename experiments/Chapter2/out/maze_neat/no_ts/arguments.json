@@ -1,0 +1,9 @@
+{
+    "name": "no_ts",
+    "task": "medium",
+    "pop_size": 500,
+    "generation": 500,
+    "timesteps": 400,
+    "num_cores": 6,
+    "no_plot": false
+}

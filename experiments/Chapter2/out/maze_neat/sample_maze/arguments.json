@@ -1,0 +1,9 @@
+{
+    "name": "sample_maze",
+    "task": "hard",
+    "pop_size": 200,
+    "generation": 500,
+    "timesteps": 400,
+    "num_cores": 4,
+    "no_plot": false
+}

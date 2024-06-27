@@ -32,10 +32,12 @@ def main():
 
     initialize_experiment(args.name, save_path, args)
 
-
+# 出力からロボットの設定ファイルを作成
     decoder = EvogymStructureDecoder(args.shape)
-    decode_function = decoder.decode
+    decode_function = decoder.decode 
 
+    # 出力されたロボットを評価するかどうかを判断
+    # 条件は構成要素がつながっている，アクチュエータを持っている，過去に評価されたロボットでない
     constraint = EvogymStructureConstraint(decode_function)
     constraint_function = constraint.eval_constraint
 

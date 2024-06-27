@@ -10,12 +10,12 @@ class CompleteExtinctionException(Exception):
 
 class Population:
     """
-    This class implements the core evolution algorithm:
-        1. Evaluate fitness of all genomes.
-        2. Check to see if the termination criterion is satisfied; exit if it is.
-        3. Generate the next generation from the current population.
-        4. Partition the new generation into species based on genetic similarity.
-        5. Go to 1.
+    このクラスはコアとなる進化アルゴリズムを実装している：
+        1. すべてのゲノムのフィットネスを評価する。
+        2. 終了基準を満たすかどうかをチェックする。
+        3. 現在の集団から次の世代を生成する。
+        4. 新しい世代を遺伝的類似性に基づいて種に分割する。
+        5. 1.に戻る。
     """
 
     def __init__(self, config, initial_state=None, constraint_function=None):

@@ -6,27 +6,30 @@ from gym_utils import make_vec_envs
 
 class EvogymControllerEvaluator:
     def __init__(self, env_id, robot, num_eval=1):
-        self.env_id = env_id
-        self.robot = robot
-        self.num_eval = num_eval
+        self.env_id = env_id # task
+        self.robot = robot # 構造とつながり
+        self.num_eval = num_eval # 試行回数
 
     def evaluate_controller(self, key, controller, generation):
-        env = make_vec_envs(self.env_id, self.robot, 0, 1)
+        env = make_vec_envs(self.env_id, self.robot, 0, 1) #　１個体に対して複数回試行するために環境を複数個作る
 
-        obs = env.reset()
-        episode_scores = []
-        while len(episode_scores) < self.num_eval:
-            action = np.array(controller.activate(obs[0]))*2 - 1
-            obs, _, done, infos = env.step([np.array(action)])
+        obs = env.reset() # 環境の初期の情報の取得
+        episode_scores = [] # 
+        
+        while len(episode_scores) < self.num_eval: # エピソードの評価数　<　評価の実行回数
+            # obs[0]は座標と速度すべての情報，2を掛けて１引くことでアクアクチュエータに設定した入力範囲に合わせる
+            action = np.array(controller.activate(obs[0]))*2 - 1 
+            # 
+            obs, _, done, infos = env.step([np.array(action)]) #　動作の実行
 
-            if 'episode' in infos[0]:
-                score = infos[0]['episode']['r']
-                episode_scores.append(score)
+            if 'episode' in infos[0]: # 辞書型info[0]にキー'episode'があるとき
+                score = infos[0]['episode']['r'] # info内のepisode内のrewardをスコアに代入
+                episode_scores.append(score) #　リストに追加
 
-        env.close()
+        env.close() # 環境を閉じる
 
         results = {
-            'fitness': np.mean(episode_scores),
+            'fitness': np.mean(episode_scores),  # 平均をとる
         }
         return results
 
@@ -93,6 +96,15 @@ from run_ppo import run_ppo
 
 class EvogymStructureEvaluator:
     def __init__(self, env_id, save_path, ppo_iters, eval_interval, deterministic=True):
+        """_summary_
+
+        Args:
+            env_id (_type_): タスク名
+            save_path (_type_): _description_
+            ppo_iters (_type_): 試行回数
+            eval_interval (_type_): 評価間隔
+            deterministic (bool, optional): 行動を確立的に（変化させる）選ぶか. Defaults to True.
+        """
         self.env_id = env_id
         self.save_path = save_path
         self.robot_save_path = os.path.join(save_path, 'robot')
@@ -111,11 +123,11 @@ class EvogymStructureEvaluator:
         np.savez(file_robot, **robot)
 
         reward = run_ppo(
-            env_id=self.env_id,
+            env_id=self.env_id, # 環境名
             robot=robot,
             train_iters=self.ppo_iters,
             eval_interval=self.eval_interval,
-            save_file=file_controller,
+            save_file=file_controller, #コントローラーの保存
             deterministic=self.deterministic
         )
 

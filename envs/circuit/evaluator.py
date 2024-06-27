@@ -57,7 +57,7 @@ class CircuitEvaluator:
             error = np.mean(np.abs(self.output_data - output_pred))
         else:
             error = np.mean(np.square(self.output_data - output_pred))
-
+            
         results = {
             'fitness': 1.0 - error
         }

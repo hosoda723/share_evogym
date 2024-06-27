@@ -3,10 +3,12 @@ from neat.nn import FeedForwardNetwork
 from neat.activations import sigmoid_activation
 from neat.aggregations import sum_aggregation
 
+# 
 class FeedForwardNetwork(FeedForwardNetwork):
 
     # modified argument "config" to indice "genome_config"
     @staticmethod
+    # ゲノムを受け取りフィードフォワードNNを生成する
     def create(genome, config):
         """ Receives a genome and returns its phenotype (a FeedForwardNetwork). """
 

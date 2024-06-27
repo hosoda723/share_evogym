@@ -5,6 +5,6 @@
     "pop_size": 200,
     "generation": 500,
     "eval_num": 1,
-    "num_cores": 12,
-    "no_view": true
+    "num_cores": 4,
+    "no_view": false
 }

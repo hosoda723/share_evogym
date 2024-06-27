@@ -1,3 +1,4 @@
+# コマンドライン引数の処理
 import argparse
 
 
@@ -36,7 +37,7 @@ def get_args():
 
     parser.add_argument(
         '-c', '--num-cores',
-        default=4, type=int,
+        default=6, type=int,
         help='number of parallel evaluation processes (default: 4)'
     )
     parser.add_argument(
@@ -48,5 +49,43 @@ def get_args():
 
     if args.name is None:
         args.name = args.task
+
+    return args
+
+def get_figure_args():
+    parser = argparse.ArgumentParser(
+        description='make circuit figures'
+    )
+
+    parser.add_argument(
+        'name',
+        type=str,
+        help='nam of experiment for making figures'
+    )
+    parser.add_argument(
+        '-s', '--specified',
+        type=int,
+        help='input id, make figure for the only specified circuit (usage: "-s {id}")'
+    )
+
+    parser.add_argument(
+        '-c', '--num-cores',
+        default=1, type=int,
+        help='number of parallel making processes (default: 1)'
+    )
+    parser.add_argument(
+        '--not-overwrite',
+        action='store_true', default=False,
+        help='skip process if already gif exists (default: False)'
+    )
+    parser.add_argument(
+        '--no-multi',
+        action='store_true', default=False,
+        help='do without using multiprocessing. if error occur, try this option. (default: False)'
+    )
+
+    args = parser.parse_args()
+
+    assert args.name is not None, 'argumented error: input "{experiment name}"'
 
     return args

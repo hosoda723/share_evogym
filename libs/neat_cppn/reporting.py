@@ -12,9 +12,9 @@ class SaveResultReporter(BaseReporter):
 
         self.save_path = save_path
         self.history_pop_file = os.path.join(self.save_path, 'history_pop.csv')
-        self.history_pop_header = ['generation', 'id', 'fitness', 'species', 'parent1', 'parent2']
+        self.history_pop_header = ['generation', 'id', 'fitness', 'species', 'parent1', 'parent2', 'timestep']
         self.history_fitness_file = os.path.join(self.save_path, 'history_fitness.csv')
-        self.history_fitness_header = ['generation', 'id', 'fitness', 'species', 'parent1', 'parent2']
+        self.history_fitness_header = ['generation', 'id', 'fitness', 'species', 'parent1', 'parent2', 'timestep']
 
         self.genome_path = os.path.join(self.save_path, 'genome')
         os.makedirs(self.genome_path, exist_ok=True)
@@ -41,7 +41,8 @@ class SaveResultReporter(BaseReporter):
                     'fitness': genome.fitness,
                     'species': species.get_species_id(genome.key),
                     'parent1': genome.parent1,
-                    'parent2': genome.parent2
+                    'parent2': genome.parent2,
+                    'timestep': genome.timestep
                 }
                 writer.writerow(items)
 
@@ -52,7 +53,8 @@ class SaveResultReporter(BaseReporter):
             'fitness': current_best.fitness,
             'species': species.get_species_id(current_best.key),
             'parent1': current_best.parent1,
-            'parent2': current_best.parent2
+            'parent2': current_best.parent2,
+            'timestep': current_best.timestep
         }
         with open(self.history_fitness_file, 'a', newline='') as f:
             writer = csv.DictWriter(f, fieldnames=self.history_fitness_header)

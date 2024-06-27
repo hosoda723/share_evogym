@@ -10,6 +10,17 @@ from gym_utils import make_vec_envs
 import ppo_config as default_config
 
 def evaluate(policy, envs, num_eval=1, deterministic=True):
+    """ robotの評価を行っている
+
+    Args:
+        policy (_type_): 設定
+        envs (_type_): 環境
+        num_eval (int, optional): エピソード数
+        deterministic (bool, optional): _description_. Defaults to True.
+
+    Returns:
+        _type_: _description_
+    """
 
     obs = envs.reset()
     episode_rewards = []
@@ -24,13 +35,14 @@ def evaluate(policy, envs, num_eval=1, deterministic=True):
     return np.mean(episode_rewards)
 
 
-def run_ppo(env_id, robot, train_iters, eval_interval, save_file, config=None, deterministic=True, save_iter=False, history_file=None):
+def run_ppo(env_id, robot, train_iters, eval_interval, save_file, config=None, deterministic=True, save_iter=None, history_file=None):
 
-    if config is None:
+    if config is None: # 設定を書き換える必要があるか
         config = default_config
 
+    # 訓練環境の作成
     train_envs = make_vec_envs(env_id, robot, config.seed, config.num_processes, gamma=config.gamma, vecnormalize=True)
-
+    # 評価用の環境の作成
     eval_envs = make_vec_envs(env_id, robot, config.seed, config.eval_processes, gamma=None, vecnormalize=True)
     eval_envs.training = False
 
@@ -40,7 +52,7 @@ def run_ppo(env_id, robot, train_iters, eval_interval, save_file, config=None, d
         init_log_std=config.init_log_std,
         device='cpu'
     )
-
+    
     algo = PPO(
         policy,
         train_envs,
@@ -76,17 +88,24 @@ def run_ppo(env_id, robot, train_iters, eval_interval, save_file, config=None, d
             writer.writerow(items)
 
     max_reward = float('-inf')
+    max_iter_cur = 1
+    last_eval_iter = 0
 
     for iter in range(train_iters):
         
         algo.step()
 
         if (iter+1) % eval_interval == 0:
+            last_eval_iter = iter+1
             eval_envs.obs_rms = train_envs.obs_rms.copy()
-            reward = evaluate(policy, eval_envs, num_eval=config.eval_processes, deterministic=deterministic)
+            # reward = evaluate(policy, eval_envs, num_eval=config.eval_processes, deterministic=deterministic)
+            reward = evaluate(policy, eval_envs, num_eval=config.eval_processes, deterministic=False)
             if reward > max_reward:
-                max_reward = reward
+                print("#"*30)
+                max_reward = reward # maxの更新
+                max_iter_cur = iter + 1
                 if not save_iter:
+                    print("*"*30)
                     torch.save([policy.state_dict(), train_envs.obs_rms], save_file + '.pt')
 
             if save_iter:
@@ -105,7 +124,14 @@ def run_ppo(env_id, robot, train_iters, eval_interval, save_file, config=None, d
                     writer = csv.DictWriter(f, fieldnames=history_header)
                     writer.writerow(items)
 
-    train_envs.close()
+    train_envs.close() # 環境の終了
     eval_envs.close()
+    
+    from pathlib import Path
+    myfile = Path(save_file + ".txt")
+    myfile.touch(exist_ok=True)
+    with open(save_file+".txt", "w") as f:
+        print(f"Last eval iter is {last_eval_iter}. Max reward iter is {max_iter_cur}", file=f)
+    f.close()
 
     return max_reward

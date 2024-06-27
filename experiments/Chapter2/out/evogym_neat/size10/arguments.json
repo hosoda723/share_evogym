@@ -1,0 +1,10 @@
+{
+    "name": "size10",
+    "task": "Walker-v0",
+    "robot": "cat",
+    "pop_size": 10,
+    "generation": 500,
+    "eval_num": 1,
+    "num_cores": 4,
+    "no_view": false
+}

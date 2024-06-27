@@ -8,8 +8,8 @@ class BaseCPPNDecoder:
     def feedforward(self, inputs, genome, config):
         cppn = FeedForwardNetwork.create(genome, config)
 
-        states = []
-        for inp in inputs:
+        states = [] # ボクセルの特徴を入れるもの
+        for inp in inputs: # 
             state = cppn.activate(inp)
             states.append(state)
 
@@ -33,6 +33,15 @@ class BaseHyperDecoder:
         self.output_dims = 1
 
     def decode(self, genome, config):
+        """_summary_
+
+        Args:
+            genome (_type_): ゲノム
+            config (_type_): 設定
+
+        Returns:
+            _type_: _description_
+        """
         output_activation = genome.nodes[config.output_keys[0]].activation
 
         cppn = FeedForwardNetwork.create(genome, config)
