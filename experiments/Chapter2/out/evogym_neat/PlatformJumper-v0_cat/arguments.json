@@ -1,0 +1,10 @@
+{
+    "name": "PlatformJumper-v0_cat",
+    "task": "PlatformJumper-v0",
+    "robot": "cat",
+    "pop_size": 200,
+    "generation": 500,
+    "eval_num": 1,
+    "num_cores": 4,
+    "no_view": false
+}
